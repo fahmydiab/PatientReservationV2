@@ -14,9 +14,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.hateoas.EntityModel;
@@ -35,8 +34,6 @@ public class PatientController {
 	// To retrieve all patients
 	@GetMapping("/patients")
 	public List<Patient> retrieveAllPatients() {
-		System.out.println("_+_=-===----------------------");
-
 		return patientRepository.findAll();
 	}
 
@@ -56,12 +53,26 @@ public class PatientController {
 
 		return resource;
 	}
+
 	@DeleteMapping("/patients/{id}")
 	public void deletePatient(@PathVariable int id) {
 		patientRepository.deleteById(id);
 	}
 
-	
+	@PutMapping("/patients/{id}")
+	public ResponseEntity<Object> updateDoctor(@RequestBody Patient patient, @PathVariable int id) {
+
+		Optional<Patient> patientOptional = patientRepository.findById(id);
+
+		if (!patientOptional.isPresent())
+			return ResponseEntity.notFound().build();
+
+		patient.setId(id);
+
+		patientRepository.save(patient);
+
+		return ResponseEntity.noContent().build();
+	}
 
 	@PostMapping("/patients")
 	public ResponseEntity<Object> createPatient(@Valid @RequestBody Patient patient) {

@@ -31,9 +31,9 @@ CREATE TABLE `appointment` (
   PRIMARY KEY (`appointment_id`),
   KEY `FK_patient_id_idx` (`patient_id`),
   KEY `FK_doctor_id_idx` (`doctor_id`),
-  CONSTRAINT `FK_doctor_id` FOREIGN KEY (`doctor_id`) REFERENCES `doctor` (`doctor_id`),
-  CONSTRAINT `FK_patient_id` FOREIGN KEY (`patient_id`) REFERENCES `patient` (`patient_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  CONSTRAINT `FK_doctor_id` FOREIGN KEY (`doctor_id`) REFERENCES `doctor` (`doctor_id`) ON UPDATE CASCADE,
+  CONSTRAINT `FK_patient_id` FOREIGN KEY (`patient_id`) REFERENCES `patient` (`patient_id`) ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,6 +42,7 @@ CREATE TABLE `appointment` (
 
 LOCK TABLES `appointment` WRITE;
 /*!40000 ALTER TABLE `appointment` DISABLE KEYS */;
+INSERT INTO `appointment` VALUES (1,'2020-03-02 00:00:00',1102,1202,'tooth removal'),(2,'2020-05-12 00:00:00',1102,1202,'checkup'),(3,'2020-04-02 00:00:00',1102,1202,'teeth cleaning');
 /*!40000 ALTER TABLE `appointment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -58,10 +59,10 @@ CREATE TABLE `doctor` (
   `speciality` varchar(45) NOT NULL,
   `address` varchar(255) NOT NULL,
   `education` varchar(255) NOT NULL,
-  `manager_id` bigint(20) DEFAULT NULL,
+  `manager_id` bigint(10) DEFAULT NULL,
   PRIMARY KEY (`doctor_id`),
   KEY `FK_manager_id_idx` (`manager_id`),
-  CONSTRAINT `FK_manager` FOREIGN KEY (`manager_id`) REFERENCES `doctor` (`doctor_id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `FK_manager` FOREIGN KEY (`manager_id`) REFERENCES `doctor` (`doctor_id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1205 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -71,7 +72,7 @@ CREATE TABLE `doctor` (
 
 LOCK TABLES `doctor` WRITE;
 /*!40000 ALTER TABLE `doctor` DISABLE KEYS */;
-INSERT INTO `doctor` VALUES (1201,'ahmed ','teeth','mansura','mansura university',1201),(1202,'amr','teeth','cairo','cairo university',1201),(1203,'doaa','bones','Alex','Alex university',NULL);
+INSERT INTO `doctor` VALUES (1201,'ahmed ','teeth','mansura','mansura university',NULL),(1202,'amr','teeth','cairo','cairo university',1201),(1203,'doaa','bones','Alex','Alex university',1204),(1204,'Ibrahim','bones','Bani Suif','BaniSuif University',NULL);
 /*!40000 ALTER TABLE `doctor` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -88,7 +89,7 @@ CREATE TABLE `patient` (
   `birth_date` date DEFAULT NULL,
   `gender` varchar(45) NOT NULL,
   PRIMARY KEY (`patient_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1105 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1106 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -97,7 +98,7 @@ CREATE TABLE `patient` (
 
 LOCK TABLES `patient` WRITE;
 /*!40000 ALTER TABLE `patient` DISABLE KEYS */;
-INSERT INTO `patient` VALUES (1102,'fahmy',NULL,'male'),(1103,'Alaa','1992-12-08','male'),(1104,'Emad','1994-12-08','male');
+INSERT INTO `patient` VALUES (1102,'fahmy',NULL,'male'),(1103,'Alaa','1992-12-08','male'),(1104,'Emad','1994-12-08','male'),(1105,'mina',NULL,'male');
 /*!40000 ALTER TABLE `patient` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -110,4 +111,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-03-01 13:35:24
+-- Dump completed on 2020-03-01 21:49:26

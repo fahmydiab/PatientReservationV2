@@ -2,53 +2,53 @@ package com.doctor.reservation.entity;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
+
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 
 @Entity
+@Table(name = "appointment")
 public class Appointment {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "appointent_id")
-	private Integer id;
+	@Column(name = "appointment_id")
+	private int appointmentId;
 	
 	@Column(name="date_time")
 	@NotNull
 	private Date dateTime;
 	
-	@OneToOne
-	@NotNull
-	@JoinColumn(name="patient_id" ,insertable=false, updatable=false)
-	private Patient patient;
-	
-	@OneToOne
-	@NotNull
-	@JoinColumn(name="doctor_id" ,insertable=false, updatable=false)
+	@ManyToOne(cascade =  {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})
+	@JoinColumn(name="doctor_id")
 	private Doctor doctor;
+	
+	@ManyToOne(cascade =  {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})
+	@JoinColumn(name="patient_id")
+	private Patient patient;
 	
 	@Column(name = "brief_complain")
 	@NotNull
+	@Size(min = 5, message = "Name should have at least 5 characters")
 	private String briefComplain;
 
-	@Override
-	public String toString() {
-		return "Appointment [id=" + id + ", dateTime=" + dateTime + ", patient=" + patient + ", doctor=" + doctor
-				+ ", briefComplain=" + briefComplain + "]";
+	
+	public Patient getPatient() {
+		return patient;
 	}
 
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
+	public void setPatient(Patient patient) {
+		this.patient = patient;
 	}
 
 	public Date getDateTime() {
@@ -59,21 +59,6 @@ public class Appointment {
 		this.dateTime = dateTime;
 	}
 
-	public Patient getPatient() {
-		return patient;
-	}
-
-	public void setPatient(Patient patient) {
-		this.patient = patient;
-	}
-
-	public Doctor getDoctor() {
-		return doctor;
-	}
-
-	public void setDoctor(Doctor doctor) {
-		this.doctor = doctor;
-	}
 
 	public String getBriefComplain() {
 		return briefComplain;
@@ -83,21 +68,45 @@ public class Appointment {
 		this.briefComplain = briefComplain;
 	}
 
-	public Appointment(Integer id, Date dateTime, Patient patient, Doctor doctor, String briefComplain) {
-		super();
-		this.id = id;
-		this.dateTime = dateTime;
-		this.patient = patient;
+
+	public Doctor getDoctor() {
+		return doctor;
+	}
+
+	public void setDoctor(Doctor doctor) {
 		this.doctor = doctor;
+	}
+
+	public int getAppointmentId() {
+		return appointmentId;
+	}
+
+	public void setAppointmentId(int appointmentId) {
+		this.appointmentId = appointmentId;
+	}
+
+
+	public Appointment(int appointmentId, @NotNull Date dateTime, Doctor doctor, Patient patient,
+			@NotNull @Size(min = 5, message = "Name should have at least 5 characters") String briefComplain) {
+		super();
+		this.appointmentId = appointmentId;
+		this.dateTime = dateTime;
+		this.doctor = doctor;
+		this.patient = patient;
 		this.briefComplain = briefComplain;
 	}
 
 	public Appointment() {
 		super();
 	}
-	
-	
-	
-	
 
+	@Override
+	public String toString() {
+		return "Appointment [appointmentId=" + appointmentId + ", dateTime=" + dateTime + ", doctor=" + doctor
+				+ ", patient=" + patient + ", briefComplain=" + briefComplain + "]";
+	}
+
+	
+	
+	
 }

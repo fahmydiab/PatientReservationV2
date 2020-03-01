@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +23,9 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 
+import com.doctor.reservation.entity.Appointment;
 import com.doctor.reservation.entity.Doctor;
+import com.doctor.reservation.repository.AppointmentRepository;
 import com.doctor.reservation.repository.DoctorRepository;
 
 @RestController()
@@ -30,12 +33,13 @@ public class DoctorController {
 
 	@Autowired
 	private DoctorRepository doctorRepository;
+	
+	@Autowired
+	private AppointmentRepository appointmentRepository;
 
 	// To retrieve all patients
 	@GetMapping("/doctors")
 	public List<Doctor> retrieveAllDoctors() {
-		System.out.println("_+_=-===----------------------");
-
 		return doctorRepository.findAll();
 	}
 
@@ -60,7 +64,20 @@ public class DoctorController {
 		doctorRepository.deleteById(id);
 	}
 
-	
+	@PutMapping("/doctors/{id}")
+	public ResponseEntity<Object> updateDoctor(@RequestBody Doctor doctor, @PathVariable int id) {
+
+		Optional<Doctor> doctorOptional = doctorRepository.findById(id);
+
+		if (!doctorOptional.isPresent())
+			return ResponseEntity.notFound().build();
+
+		doctor.setId(id);
+		
+		doctorRepository.save(doctor);
+
+		return ResponseEntity.noContent().build();
+	}
 
 	@PostMapping("/doctors")
 	public ResponseEntity<Object> createPatient(@Valid @RequestBody Doctor doctor) {
@@ -71,5 +88,12 @@ public class DoctorController {
 				.toUri();
 
 		return ResponseEntity.created(uri).build();
+	}
+	
+	@GetMapping("/doctors/{doctorId}/appointments")
+	public List<Appointment> retrieveAppointmentByDoctorId(@PathVariable int doctorId) {
+
+		return appointmentRepository.findByDoctorId(doctorId);
+		
 	}
 }
