@@ -33,7 +33,7 @@ public class DoctorController {
 
 	@Autowired
 	private DoctorRepository doctorRepository;
-	
+
 	@Autowired
 	private AppointmentRepository appointmentRepository;
 
@@ -59,6 +59,7 @@ public class DoctorController {
 
 		return resource;
 	}
+
 	@DeleteMapping("/doctors/{id}")
 	public void deleteDoctor(@PathVariable int id) {
 		doctorRepository.deleteById(id);
@@ -66,14 +67,21 @@ public class DoctorController {
 
 	@PutMapping("/doctors/{id}")
 	public ResponseEntity<Object> updateDoctor(@RequestBody Doctor doctor, @PathVariable int id) {
+		System.out.println("111111111111111");
 
 		Optional<Doctor> doctorOptional = doctorRepository.findById(id);
+		System.out.println("222222222222222");
 
 		if (!doctorOptional.isPresent())
 			return ResponseEntity.notFound().build();
 
 		doctor.setId(id);
-		
+
+		Doctor managerDr = doctorRepository.findById(doctor.getManagerDr().getId()).get();
+		if (managerDr != null) {
+			managerDr.getTeam().add(doctor);
+		}
+
 		doctorRepository.save(doctor);
 
 		return ResponseEntity.noContent().build();
@@ -82,6 +90,12 @@ public class DoctorController {
 	@PostMapping("/doctors")
 	public ResponseEntity<Object> createPatient(@Valid @RequestBody Doctor doctor) {
 
+		if (doctor.getManagerDr() != null) {
+
+			Optional<Doctor> managerDr = doctorRepository.findById(doctor.getManagerDr().getId());
+			managerDr.get().getTeam().add(doctor);
+		}
+
 		Doctor savedDoctor = doctorRepository.save(doctor);
 
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}").buildAndExpand(savedDoctor.getId())
@@ -89,11 +103,12 @@ public class DoctorController {
 
 		return ResponseEntity.created(uri).build();
 	}
-	
+
 	@GetMapping("/doctors/{doctorId}/appointments")
 	public List<Appointment> retrieveAppointmentByDoctorId(@PathVariable int doctorId) {
 
 		return appointmentRepository.findByDoctorId(doctorId);
-		
+
 	}
+
 }

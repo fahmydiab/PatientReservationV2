@@ -5,47 +5,44 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
-@Table(name = "patient")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Patient  {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "patient_id")
+	@GeneratedValue
 	private int patientId;
 
-	@Column(name = "name")
 	@NotNull
 	@Size(min = 3, message = "Name should have at least 3 characters")
 	private String name;
 
-	@Column(name = "birth_date")
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	@Past
 	private Date birthDate;
 
-	@Column(name = "gender")
 	@NotNull
 	private String gender;
 
-	@OneToMany(mappedBy = "patient",
+	@OneToMany(
+			mappedBy = "patient",
 			cascade = CascadeType.ALL)
 	@JsonIgnore
 	private List<Appointment> appointments = new ArrayList<>();

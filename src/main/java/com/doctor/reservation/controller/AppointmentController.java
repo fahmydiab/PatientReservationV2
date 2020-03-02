@@ -91,22 +91,18 @@ public class AppointmentController {
 	@PostMapping("/appointments")
 	public ResponseEntity<Object> createPatient(@Valid @RequestBody Appointment appointment) {
 
-		System.out.println("111111111111111111");
 		Doctor doctor = doctorRepository.findById(appointment.getDoctor().getId()).get();
 		doctor.add(appointment);
 		
 		Patient patient = patientRepository.findById(appointment.getPatient().getId()).get();
 		patient.add(appointment);
-		
-		System.out.println("2222222222");
+
 		Appointment savedAppointment = appointmentRepository.save(appointment);
 
-		System.out.println("3333333333333");
 		
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}")
 				.buildAndExpand(savedAppointment.getAppointmentId()).toUri();
 
-		System.out.println("44444444444444444");
 		return ResponseEntity.created(uri).build();
 	}
 	

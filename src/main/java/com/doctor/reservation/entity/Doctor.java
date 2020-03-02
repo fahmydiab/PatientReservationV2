@@ -2,68 +2,67 @@ package com.doctor.reservation.entity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.sun.istack.Nullable;
+
 @Entity
-@Table(name = "doctor")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+property = "id")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Doctor {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "doctor_id")
+	@GeneratedValue
 	private Integer id;
 
-	@Column(name = "name")
 	@NotNull
 	@Size(min = 2, message = "Name should have at least 2 characters")
 	private String name;
 
-	@Column(name = "speciality")
 	@NotNull
-	private String specialty;
+	private String specialization;
 
-	@Column(name = "address")
 	@NotNull
 	private String address;
 
-	@Column(name = "education")
 	@NotNull
 	private String education;
 
-	@OneToMany(mappedBy = "doctor",
+	@OneToMany(
+			mappedBy ="doctor"
+			,fetch = FetchType.LAZY,
 			cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})
 	@JsonIgnore
 	private List<Appointment> appointments;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	
+	@ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
 	@JoinColumn(name = "manager_id")
-	@JsonIgnore
 	@NotFound(action = NotFoundAction.IGNORE)
+	@Nullable
 	private Doctor managerDr;
-
-	@OneToMany(mappedBy = "managerDr", fetch = FetchType.EAGER)
-	private Set<Doctor> team;
+	
+	@OneToMany(mappedBy = "managerDr", fetch = FetchType.LAZY)
+	private List<Doctor> team;
 
 	public Integer getId() {
 		return id;
@@ -81,12 +80,12 @@ public class Doctor {
 		this.name = name;
 	}
 
-	public String getSpecialty() {
-		return specialty;
+	public String getSpecialization() {
+		return specialization;
 	}
 
-	public void setSpecialty(String specialty) {
-		this.specialty = specialty;
+	public void setSpecialization(String specialization) {
+		this.specialization = specialization;
 	}
 
 	public String getAddress() {
@@ -113,11 +112,11 @@ public class Doctor {
 		this.managerDr = managerDr;
 	}
 
-	public Set<Doctor> getTeam() {
+	public List<Doctor> getTeam() {
 		return team;
 	}
 
-	public void setTeam(Set<Doctor> team) {
+	public void setTeam(List<Doctor> team) {
 		this.team = team;
 	}
 	
@@ -132,12 +131,12 @@ public class Doctor {
 	
 
 	public Doctor(Integer id, @NotNull @Size(min = 2, message = "Name should have at least 2 characters") String name,
-			@NotNull String specialty, @NotNull String address, @NotNull String education,
-			List<Appointment> appointments, Doctor managerDr, Set<Doctor> team) {
+			@NotNull String specialization, @NotNull String address, @NotNull String education,
+			List<Appointment> appointments, Doctor managerDr, List<Doctor> team) {
 		super();
 		this.id = id;
 		this.name = name;
-		this.specialty = specialty;
+		this.specialization = specialization;
 		this.address = address;
 		this.education = education;
 		this.appointments = appointments;
@@ -153,7 +152,7 @@ public class Doctor {
 
 	@Override
 	public String toString() {
-		return "Doctor [id=" + id + ", name=" + name + ", specialty=" + specialty + ", address=" + address
+		return "Doctor [id=" + id + ", name=" + name + ", specialization=" + specialization + ", address=" + address
 				+ ", education=" + education + ", appointments=" + appointments + ", managerDr=" + managerDr + ", team="
 				+ team + "]";
 	}
@@ -165,4 +164,18 @@ public class Doctor {
 		appointments.add(tempAppointment);
 		tempAppointment.setDoctor(this);
 	}
+	
+	public void add(Doctor tempDoctor) {
+		if(team==null) {
+			team=new ArrayList<>();
+		}
+		System.out.println("111111111111");
+		team.add(tempDoctor);
+		System.out.println("222222222");
+		tempDoctor.setManagerDr(this);
+		System.out.println("333333333");
+	}
+	
+	
+	
 }

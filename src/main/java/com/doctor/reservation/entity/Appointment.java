@@ -3,29 +3,23 @@ package com.doctor.reservation.entity;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 
 @Entity
-@Table(name = "appointment")
 public class Appointment {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "appointment_id")
+	@GeneratedValue
 	private int appointmentId;
 	
-	@Column(name="date_time")
 	@NotNull
 	private Date dateTime;
 	
@@ -37,7 +31,6 @@ public class Appointment {
 	@JoinColumn(name="patient_id")
 	private Patient patient;
 	
-	@Column(name = "brief_complain")
 	@NotNull
 	@Size(min = 5, message = "Name should have at least 5 characters")
 	private String briefComplain;
@@ -86,7 +79,8 @@ public class Appointment {
 	}
 
 
-	public Appointment(int appointmentId, @NotNull Date dateTime, Doctor doctor, Patient patient,
+	public Appointment(int appointmentId, @NotNull Date dateTime, 
+			Doctor doctor, Patient patient,
 			@NotNull @Size(min = 5, message = "Name should have at least 5 characters") String briefComplain) {
 		super();
 		this.appointmentId = appointmentId;
@@ -102,8 +96,10 @@ public class Appointment {
 
 	@Override
 	public String toString() {
-		return "Appointment [appointmentId=" + appointmentId + ", dateTime=" + dateTime + ", doctor=" + doctor
-				+ ", patient=" + patient + ", briefComplain=" + briefComplain + "]";
+		return "Appointment [appointmentId=" + appointmentId + ", dateTime=" + dateTime 
+				+ ", doctor=" + doctor
+				+ ", patient=" + patient 
+				+ ", briefComplain=" + briefComplain + "]";
 	}
 
 	
