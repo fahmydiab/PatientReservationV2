@@ -10,7 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 class ReservationApplicationTests {
 
 	@Test
-	void contextLoads() {
+	public void contextLoads() {
 	}
 	
 	
