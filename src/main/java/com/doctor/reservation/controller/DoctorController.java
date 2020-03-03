@@ -95,7 +95,7 @@ public class DoctorController {
 	}
 
 	@PostMapping("/doctors")
-	public ResponseEntity<Object> createPatient(@Valid @RequestBody Doctor doctor) {
+	public ResponseEntity<Object> createDoctor(@Valid @RequestBody Doctor doctor) {
 
 		biDirectionalMethod(doctor);
 
@@ -116,7 +116,7 @@ public class DoctorController {
 
 	//bidirectional one to many convenience method
 	private void biDirectionalMethod(Doctor doctor) {
-		if (doctor.getManagerDr().getId() != null) {
+		if (doctor.getManagerDr()!= null) {
 
 			Optional<Doctor> managerDr = doctorRepository.findById(doctor.getManagerDr().getId());
 			if (managerDr != null) {

@@ -3,6 +3,8 @@ package com.doctor.reservation.controller;
 import static org.junit.Assert.assertEquals;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -27,6 +30,7 @@ import com.doctor.reservation.entity.Patient;
 import com.doctor.reservation.repository.PatientRepository;
 
 @RunWith(SpringRunner.class)
+@WithMockUser
 @WebMvcTest(value = PatientController.class)
 public class PatientControllerTest {
 
@@ -37,16 +41,22 @@ public class PatientControllerTest {
 	private PatientRepository patientRepository;
 
 	Patient mockPatient = new Patient(999, "Raul", null, "male");
+	Patient mockPatient2 = new Patient(9299, "Jhon", null, "male");
+
+	List<Patient> mockList =Arrays.asList(new Patient[] {mockPatient,mockPatient2});
+			
+	 
 	String examplePatientJson = "{\"name\":\"Raul\",\"birthDate\":null,\"gender\":\"male\",\"id\":999}";
 
 	@Test
 	public void retrievePatient() throws Exception {
-		Mockito.when(patientRepository.findById(Mockito.anyInt()).get()).thenReturn(mockPatient);
+		Mockito.when(patientRepository.findAll()).thenReturn(mockList);
 
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/patients/id").accept(MediaType.APPLICATION_JSON);
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/patients").accept(MediaType.APPLICATION_JSON);
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 		System.out.println(result.getResponse());
-		String expected = "{name:Raul,birthDate:null,gender:male,id:999}";
+		String expected = "[{name:Raul,birthDate:null,gender:male,id:999},"
+				+ "{name:Jhon,birthDate:null,gender:male,id:9299}]";
 		JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(), false);
 	}
 
