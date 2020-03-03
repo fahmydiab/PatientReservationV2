@@ -38,10 +38,10 @@ public class AppointmentController {
 
 	@Autowired
 	private DoctorRepository doctorRepository;
-	
+
 	@Autowired
 	private PatientRepository patientRepository;
-	
+
 	// To retrieve all appointments
 	@GetMapping("/appointments")
 	public List<Appointment> retrieveAllAppointments() {
@@ -65,7 +65,7 @@ public class AppointmentController {
 		// HATEOAS
 
 		return resource;
-		
+
 	}
 
 	@DeleteMapping("/appointments/{id}")
@@ -82,7 +82,7 @@ public class AppointmentController {
 			return ResponseEntity.notFound().build();
 
 		appointment.setAppointmentId(id);
-
+		biDirectionalMethod(appointment);
 		appointmentRepository.save(appointment);
 
 		return ResponseEntity.noContent().build();
@@ -91,22 +91,22 @@ public class AppointmentController {
 	@PostMapping("/appointments")
 	public ResponseEntity<Object> createPatient(@Valid @RequestBody Appointment appointment) {
 
-		Doctor doctor = doctorRepository.findById(appointment.getDoctor().getId()).get();
-		doctor.add(appointment);
-		
-		Patient patient = patientRepository.findById(appointment.getPatient().getId()).get();
-		patient.add(appointment);
+		biDirectionalMethod(appointment);
 
 		Appointment savedAppointment = appointmentRepository.save(appointment);
 
-		
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}")
 				.buildAndExpand(savedAppointment.getAppointmentId()).toUri();
 
 		return ResponseEntity.created(uri).build();
 	}
-	
 
-	
-	
+	private void biDirectionalMethod(Appointment appointment) {
+		Doctor doctor = doctorRepository.findById(appointment.getDoctor().getId()).get();
+		doctor.add(appointment);
+
+		Patient patient = patientRepository.findById(appointment.getPatient().getId()).get();
+		patient.add(appointment);
+	}
+
 }

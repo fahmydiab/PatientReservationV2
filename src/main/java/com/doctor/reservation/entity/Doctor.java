@@ -25,8 +25,6 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sun.istack.Nullable;
 
 @Entity
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
-property = "id")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Doctor {
 
@@ -48,8 +46,7 @@ public class Doctor {
 	private String education;
 
 	@OneToMany(
-			mappedBy ="doctor"
-			,fetch = FetchType.LAZY,
+			mappedBy ="doctor",
 			cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH})
 	@JsonIgnore
 	private List<Appointment> appointments;
@@ -59,8 +56,12 @@ public class Doctor {
 	@JoinColumn(name = "manager_id")
 	@NotFound(action = NotFoundAction.IGNORE)
 	@Nullable
+	@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+	property = "id")
 	private Doctor managerDr;
 	
+	@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+			property = "id")
 	@OneToMany(mappedBy = "managerDr", fetch = FetchType.LAZY)
 	private List<Doctor> team;
 
@@ -169,11 +170,8 @@ public class Doctor {
 		if(team==null) {
 			team=new ArrayList<>();
 		}
-		System.out.println("111111111111");
 		team.add(tempDoctor);
-		System.out.println("222222222");
 		tempDoctor.setManagerDr(this);
-		System.out.println("333333333");
 	}
 	
 	

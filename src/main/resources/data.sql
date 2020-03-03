@@ -1,10 +1,10 @@
 insert into doctor(id, name, specialization, address, education, manager_id) 
 values
-(1201,'ahmed ','teeth','mansura','mansura university',NULL),
+(1205,'Ali','bones','Alex','Alex university',NULL),
+(1201,'ahmed ','teeth','mansura','mansura university',1205),
 (1202,'amr','teeth','cairo','cairo university',1201),
-(1204,'Ibrahim','bones','Bani Suif','BaniSuif University',NULL),
-(1203,'doaa','bones','Alex','Alex university',1204),
-(1205,'Ali','bones','Alex','Alex university',NULL);
+(1204,'Ibrahim','bones','Bani Suif','BaniSuif University',1205),
+(1203,'doaa','bones','Alex','Alex university',1204);
 insert into patient(patient_id, birth_date, gender, name)
 values(1102,NULL,'male','fahmy'),(1103,'1992-12-08','male','Alaa'),(1104,'1994-12-08','male','Emad'),(1105,NULL,'male','mina');
 insert into appointment(appointment_id,date_time,patient_id, doctor_id, brief_complain)

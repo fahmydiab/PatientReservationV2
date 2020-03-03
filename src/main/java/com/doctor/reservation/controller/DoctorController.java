@@ -67,21 +67,28 @@ public class DoctorController {
 
 	@PutMapping("/doctors/{id}")
 	public ResponseEntity<Object> updateDoctor(@RequestBody Doctor doctor, @PathVariable int id) {
-		System.out.println("111111111111111");
 
 		Optional<Doctor> doctorOptional = doctorRepository.findById(id);
-		System.out.println("222222222222222");
 
 		if (!doctorOptional.isPresent())
 			return ResponseEntity.notFound().build();
 
 		doctor.setId(id);
 
-		Doctor managerDr = doctorRepository.findById(doctor.getManagerDr().getId()).get();
-		if (managerDr != null) {
-			managerDr.getTeam().add(doctor);
-		}
+		//updating doctor's managerDr
+		//adding managerDr
+		if(doctorOptional.get().getManagerDr() ==null) {
+		
+			biDirectionalMethod(doctor);
+		}else {
 
+			//changing managerDr
+			if(!doctorOptional.get().getManagerDr().equals(doctor.getManagerDr())) {
+				doctorOptional.get().getManagerDr().getTeam().remove(doctor);
+				biDirectionalMethod(doctor);
+			}
+		}
+		
 		doctorRepository.save(doctor);
 
 		return ResponseEntity.noContent().build();
@@ -90,11 +97,7 @@ public class DoctorController {
 	@PostMapping("/doctors")
 	public ResponseEntity<Object> createPatient(@Valid @RequestBody Doctor doctor) {
 
-		if (doctor.getManagerDr() != null) {
-
-			Optional<Doctor> managerDr = doctorRepository.findById(doctor.getManagerDr().getId());
-			managerDr.get().getTeam().add(doctor);
-		}
+		biDirectionalMethod(doctor);
 
 		Doctor savedDoctor = doctorRepository.save(doctor);
 
@@ -109,6 +112,18 @@ public class DoctorController {
 
 		return appointmentRepository.findByDoctorId(doctorId);
 
+	}
+
+	//bidirectional one to many convenience method
+	private void biDirectionalMethod(Doctor doctor) {
+		if (doctor.getManagerDr().getId() != null) {
+
+			Optional<Doctor> managerDr = doctorRepository.findById(doctor.getManagerDr().getId());
+			if (managerDr != null) {
+				managerDr.get().add(doctor);
+
+			}
+		}
 	}
 
 }
