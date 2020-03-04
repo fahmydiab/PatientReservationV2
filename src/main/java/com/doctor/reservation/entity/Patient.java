@@ -14,10 +14,13 @@ import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class,
+property = "id")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Patient  {
 
@@ -39,7 +42,7 @@ public class Patient  {
 	@OneToMany(
 			mappedBy = "patient",
 			cascade = CascadeType.ALL)
-	@JsonIgnore
+//	@JsonIgnore
 	private List<Appointment> appointments = new ArrayList<>();
 
 	public int getId() {
